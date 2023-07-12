@@ -1,5 +1,7 @@
 const   jwt         = require('jsonwebtoken')
-const   jwtKey      = "smartindev21"
+const dotenv = require('dotenv');
+// setup global
+dotenv.config();
 
 const verifyUserToken = (req, res, next) => {
     if (!req.headers.authorization) {
@@ -10,7 +12,7 @@ const verifyUserToken = (req, res, next) => {
       return res.status(401).json({"responseCode": 401, "responseMsg": "Access denied. No token provided."});
     }
     try {
-      const decoded = jwt.verify(token, jwtKey);
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
       req.user = decoded.user;
       next();
     } catch (err) {

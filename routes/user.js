@@ -5,10 +5,12 @@ const router  = express.Router();
 const connect = require('../config/db');
 const { body, validationResult } = require('express-validator');
 const req = require('express/lib/request');
+const dotenv = require('dotenv');
+// setup global
+dotenv.config();
 
 // import jwt
 const   jwt         = require('jsonwebtoken')
-const   jwtKey      = "smartindev21"
 const   jwtExp      = 300
 const   jwtVerif    = require('../setting/jwt')
 
@@ -52,7 +54,7 @@ router.post('/login', [
             })
         } else {
             // proses jwt
-            const token = jwt.sign({formData}, jwtKey, {
+            const token = jwt.sign({formData}, process.env.SECRET_KEY, {
                 algorithm: "HS256",
                 expiresIn: jwtExp
             })
