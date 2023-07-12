@@ -6,6 +6,12 @@ const connect = require('../config/db');
 const { body, validationResult } = require('express-validator');
 const req = require('express/lib/request');
 
+// import jwt
+const   jwt         = require('jsonwebtoken')
+const   jwtKey      = "smartindev21"
+const   jwtExp      = 300
+const   jwtVerif    = require('../setting/jwt')
+
 router.post('/login', [
     body("username").notEmpty(),
     body("password").notEmpty(),
@@ -45,13 +51,32 @@ router.post('/login', [
                 'responseMsg': "User Tidak ditemukan"
             })
         } else {
+            // proses jwt
+            const token = jwt.sign({formData}, jwtKey, {
+                algorithm: "HS256",
+                expiresIn: jwtExp
+            })
+
             return res.status(200).json({
                 'responseCode': 200,
-                'responseMsg': "User find",
-                data:       rows
+                'responseMsg': "Successfull Login",
+                'data': {
+                    'accessToken': token,
+                    'tokenType': 'Bearer',
+                    'expire':     jwtExp
+                },
+
             })
+
+            // set cookie
+            res.cookie("token", token, { maxAge: jwtExp * 1000 })
+            res.end()
         }
     })
 })
+
+router.get("/valid", jwtVerif, (req, res) => {
+    res.status(200).json({"responseCode": 200, "responseMsg": "Validated Match!!"});
+});
 
 module.exports = router;

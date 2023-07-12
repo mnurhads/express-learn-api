@@ -22,7 +22,7 @@ const setting      = require('./setting/cogs');
 app.use(cors())
 
 //  testing
-var data = "password";
+var data = "brewes";
 var crypto = require('crypto');
 mdDecypt = crypto.createHash('md5').update(data).digest("hex");
 // end
