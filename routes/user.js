@@ -14,6 +14,9 @@ const   jwt         = require('jsonwebtoken')
 const   jwtExp      = 300
 const   jwtVerif    = require('../setting/jwt')
 
+// import cogs
+const setting      = require('../setting/cogs');
+
 router.post('/login', [
     body("username").notEmpty(),
     body("password").notEmpty(),
@@ -53,11 +56,14 @@ router.post('/login', [
                 'responseMsg': "User Tidak ditemukan"
             })
         } else {
+            // proses update token
             // proses jwt
             const token = jwt.sign({formData}, process.env.SECRET_KEY, {
                 algorithm: "HS256",
                 expiresIn: jwtExp
             })
+
+            connect.query(`UPDATE users SET jwt = '${token}' WHERE name = '${formData.name}'`, formData)
 
             return res.status(200).json({
                 'responseCode': 200,
@@ -65,7 +71,10 @@ router.post('/login', [
                 'data': {
                     'accessToken': token,
                     'tokenType': 'Bearer',
-                    'expire':     jwtExp
+                    'expiredAt':     jwtExp,
+                    'scope': {
+                        "grantType": "client_credentials"
+                    }
                 },
 
             })
@@ -109,6 +118,7 @@ router.post("/register", [
         name: req.body.username,
         email: req.body.email,
         password: passHex,
+        remember_token: setting.makeid(85)
     }
 
     // cek ketersedian user / empty user
@@ -141,5 +151,46 @@ router.post("/register", [
 router.get("/valid", jwtVerif, (req, res) => {
     res.status(200).json({"responseCode": 200, "responseMsg": "Validated Match!!"});
 });
+
+// update profil
+router.patch('/profil/update/:token', [
+    body("username").notEmpty(),
+    body("email").notEmpty(),
+    body("notelp").notEmpty(),
+    body("nik").notEmpty(),
+    body("fullname").notEmpty(),
+], (req, res) => {
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    let token = req.params.token;
+
+    let formData = {
+        name:     req.body.username,
+        fullname: req.body.fullname,
+        email:    req.body.email,
+        notelp:   req.body.notelp,
+        nik:      req.body.nik
+    }
+
+    connect.query(`UPDATE users SET ? WHERE remember_token = '${token}'`, formData, function(err, rows) {
+        if (err) {
+            return res.status(500).json({
+                'responseCode': 500,
+                'responseMsg': err
+            })
+        } else {
+            return res.status(200).json({
+                'responseCode': 200,
+                'responseMsg': 'Updated Successfully'
+            })
+        }
+    })
+})
 
 module.exports = router;

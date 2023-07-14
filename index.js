@@ -33,8 +33,11 @@ app.get('/', (req, res) => {
     res.status(200).json({
       'responseCode': 200,
       'responseMsg': 'Connection API Successfully',
-      'testing': mdDecypt,
-      'data': setting.encrypt(data),
+      'testing': {
+          'crip': mdDecypt,
+          'test': setting.makeid(65),
+          'data': setting.encrypt(data),
+      }
     })
 })
 
