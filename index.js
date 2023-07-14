@@ -1,6 +1,9 @@
 const express = require('express')
+const dotenv = require('dotenv');
+// setup global
+dotenv.config();
 const app     = express()
-const port    = 4000
+const port    = process.env.PORT
 
 // IMPORT LIBRARY
 // import body parser
