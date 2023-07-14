@@ -77,6 +77,67 @@ router.post('/login', [
     })
 })
 
+router.post("/register", [
+    body("username").notEmpty(),
+    body("email").notEmpty(),
+    body("password").notEmpty(),
+    body("konfirm").notEmpty()
+], (req, res) => {
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()) {
+        return res.status(422).json({
+            errors: errors.array()
+        });
+    }
+
+    if (req.body.password != req.body.konfirm) {
+        return res.status(402).json({
+            "responseCode": 402,
+            "responseMsg": "Password yang dimasukkan tidak sama"
+        })
+    }
+
+    // hash
+    var data = req.body.password;
+    var crypto = require('crypto');
+    passHex = crypto.createHash('md5').update(data).digest("hex");
+    // end
+
+    // define formdata
+    let formData = {
+        name: req.body.username,
+        email: req.body.email,
+        password: passHex,
+    }
+
+    // cek ketersedian user / empty user
+    connect.query(`SELECT * FROM users WHERE name = '${formData.name}' AND email = '${formData.email}'`, formData, function(err, rows) {
+        if (rows.length >= 1) {
+            return res.status(201).json({
+                'responseCode': 201,
+                'responseMsg': "User sudah ada",
+            })
+        } else {
+            connect.query(`INSERT INTO users SET ?`, formData, function(err, row) {
+                if(err) {
+                    return res.status(500).json({
+                        "responseCode": 500,
+                        "responseMsg": err,
+                    })
+                } else {
+                    return res.status(200).json({
+                        "responseCode": 200,
+                        "responseMsg": "Register Success",
+                        "data": row[0]
+                    })
+                }
+            })
+        }
+    })
+    // end
+})
+
 router.get("/valid", jwtVerif, (req, res) => {
     res.status(200).json({"responseCode": 200, "responseMsg": "Validated Match!!"});
 });
