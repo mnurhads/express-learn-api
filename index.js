@@ -35,16 +35,16 @@ app.get('/', (req, res) => {
     var formatted = dt.format('Y-m-d H:M:S');
 
     res.status(200).json({
-      'responseCode': 200,
-      'responseMsg': 'Connection API Successfully',
-      'testing': {
-          'crip': mdDecypt,
-          'test': setting.makeid(65),
-          'data': setting.encrypt(data),
-          'createdAt': {
-              'dateNow': formatted
-          } 
-      }
+        'responseCode': 200,
+        'responseMsg': 'Connection API Successfully',
+        'testing': {
+            'crip': mdDecypt,
+            'test': setting.makeid(65),
+            'data': setting.encrypt(data),
+            'createdAt': {
+                'dateNow': formatted
+            } 
+        }
     })
 })
 
