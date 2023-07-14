@@ -30,6 +30,10 @@ var crypto = require('crypto');
 mdDecypt = crypto.createHash('md5').update(data).digest("hex");
 // end
 app.get('/', (req, res) => {
+    var dateTime = require('node-datetime');
+    var dt = dateTime.create();
+    var formatted = dt.format('Y-m-d H:M:S');
+
     res.status(200).json({
       'responseCode': 200,
       'responseMsg': 'Connection API Successfully',
@@ -37,6 +41,9 @@ app.get('/', (req, res) => {
           'crip': mdDecypt,
           'test': setting.makeid(65),
           'data': setting.encrypt(data),
+          'createdAt': {
+              'dateNow': formatted
+          } 
       }
     })
 })
