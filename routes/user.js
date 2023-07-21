@@ -159,7 +159,7 @@ router.patch('/profil/update/:token', [
     body("notelp").notEmpty(),
     body("nik").notEmpty(),
     body("fullname").notEmpty(),
-], (req, res) => {
+], jwtVerif, (req, res) => {
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
