@@ -6,10 +6,11 @@ const connect = require('../config/db');
 const { body, validationResult } = require('express-validator');
 const req = require('express/lib/request');
 const { route } = require('express/lib/application');
+const   jwtVerif    = require('../setting/jwt')
 
 // GET DATA
 
-router.get('/', function(req, res){
+router.get('/', jwtVerif, function(req, res){
     connect.query("SELECT * FROM rooms ORDER BY id DESC", function(err, rows){
         if (err) {
             return res.status(500).json({
@@ -33,7 +34,7 @@ router.post('/store', [
     body('floor').notEmpty(),
     body('type').notEmpty(),
     body('beds').notEmpty(),
-], (req, res) => {
+], jwtVerif, (req, res) => {
     const errors = validationResult(req);
 
     if(!errors.isEmpty()) {
@@ -68,7 +69,7 @@ router.post('/store', [
 })
 
 // SHOW DATA
-router.get('/(:id)', function (req, res) {
+router.get('/(:id)', jwtVerif, function (req, res) {
     let id = req.params.id;
 
     connect.query(`SELECT * FROM rooms WHERE id = ${id}`, function( err, rows) {
@@ -102,7 +103,7 @@ router.patch('/update/:id', [
     body('floor').notEmpty(),
     body('type').notEmpty(),
     body('beds').notEmpty(),
-], (req, res) => {
+], jwtVerif, (req, res) => {
     const errors = validationResult(req);
 
     if(!errors.isEmpty()) {
@@ -139,7 +140,7 @@ router.patch('/update/:id', [
 });
 
 // DELETE DATA
-router.delete('/delete/(:id)', function(req, res) {
+router.delete('/delete/(:id)', jwtVerif, function(req, res) {
     let id = req.params.id;
 
     connect.query(`SELECT * FROM rooms WHERE id = ${id}`, function( err, rows) {
