@@ -18,6 +18,7 @@ const cors = require('cors')
 // import router
 const productRouter = require('./routes/product');
 const userRouter    = require('./routes/user');
+const clientRouter  = require('./routes/client');
 
 // import cogs
 const setting      = require('./setting/cogs');
@@ -50,6 +51,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/product', productRouter);
 app.use('/api/v1/auth', userRouter);
+app.use('/api/v1/client', clientRouter)
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`)
