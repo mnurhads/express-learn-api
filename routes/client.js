@@ -64,10 +64,6 @@ router.post('/create', [
                 'responseMsg': 'Email / No telpon sudah terdaftar sebagai client'
             });
         } else {
-            // return res.status(200).json({
-            //     'responseCode': 200,
-            //     'responseMsg': rows
-            // });
             connect.query(`INSERT INTO clients SET ?`, formData, function(err, rows) {
                 if(err) {
                     return res.status(500).json({
