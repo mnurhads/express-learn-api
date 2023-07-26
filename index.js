@@ -1,11 +1,12 @@
 const express = require('express')
 const dotenv = require('dotenv');
 const folder   = require('path')
+var view = __dirname + "/views/";
+var public = __dirname + "/public/";
 // setup global
 dotenv.config();
 const app     = express()
 const port    = process.env.PORT
-
 // IMPORT LIBRARY
 // import body parser
 const bodyParser = require('body-parser');
@@ -27,7 +28,7 @@ const setting      = require('./setting/cogs');
 app.use(cors())
 
 //  testing
-var data = "brewes";
+var data = "okok";
 var crypto = require('crypto');
 const { path } = require('express/lib/application');
 mdDecypt = crypto.createHash('md5').update(data).digest("hex");
@@ -53,8 +54,10 @@ app.get('/', (req, res) => {
 
 // test view
 app.get('/info', (req, res) => {
-    res.sendFile(folder.join(__dirname, './views/index.html'));
+    res.sendFile(folder.join(view, 'index.html'));
 })
+
+app.use('/', express.static(public));
 
 app.use('/api/v1/product', productRouter);
 app.use('/api/v1/auth', userRouter);
