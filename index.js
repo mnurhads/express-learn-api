@@ -1,5 +1,6 @@
 const express = require('express')
 const dotenv = require('dotenv');
+const folder   = require('path')
 // setup global
 dotenv.config();
 const app     = express()
@@ -28,6 +29,7 @@ app.use(cors())
 //  testing
 var data = "brewes";
 var crypto = require('crypto');
+const { path } = require('express/lib/application');
 mdDecypt = crypto.createHash('md5').update(data).digest("hex");
 // end
 app.get('/', (req, res) => {
@@ -47,6 +49,11 @@ app.get('/', (req, res) => {
             } 
         }
     })
+})
+
+// test view
+app.get('/info', (req, res) => {
+    res.sendFile(folder.join(__dirname, './views/index.html'));
 })
 
 app.use('/api/v1/product', productRouter);
